@@ -1,6 +1,19 @@
 import { useState } from 'react';
 import styles from './index.module.css';
 
+const directions = [
+  [1,0],
+  [1,1],
+  [0,1],
+  [1,-1],
+  [-1,0],
+  [-1,-1],
+  [0,-1],
+  [-1,1],
+]
+
+
+
 const Home = () => {
   const [turnColor, setTurnColor] = useState(1);
   const [board, setBoard] = useState([
@@ -15,9 +28,24 @@ const Home = () => {
   ]);
   const clickHandler = (x: number, y: number) => {
     console.log(x, y);
+for (const direction of directions)
+  while (turnColor !== 0,undefined)
+  if (setTurnColor === 1)
+    if (turnColor === 1){break;}
+  }else{
+    if (turnColor === 2){break;}
+      if ()
+
+
+
+
     const newBoard = structuredClone(board);
-    if (board[y + 1][x] === 3 - turnColor) newBoard[y][x] = turnColor;
-    setTurnColor(3 - turncolor);
+    if (board[y + 1][x] !== undefined && board[y + 1][x] === 3 - turnColor) {
+      setTurnColor(3 - turnColor);
+    }
+
+    newBoard[y][x] = turnColor;
+    setTurnColor(3 - turnColor);
 
     newBoard[y][x] = turnColor;
 
