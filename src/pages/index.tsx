@@ -15,43 +15,51 @@ const directions = [
 const Home = () => {
   const [turnColor, setTurnColor] = useState(1);
   const [board, setBoard] = useState([
-    [0, 0, 0, 0, 0, 0, 2, 0],
-    [0, 0, 0, 0, 0, 1, 2, 0],
-    [0, 0, 0, 0, 2, 1, 2, 0],
-    [0, 0, 0, 1, 2, 1, 2, 0],
-    [0, 0, 2, 1, 2, 1, 2, 0],
-    [0, 1, 2, 1, 2, 1, 2, 0],
-    [2, 1, 2, 1, 2, 1, 2, 0],
-    [1, 2, 1, 2, 1, 2, 1, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
   ]);
 
   const clickHandler = (x: number, y: number) => {
-    console.log(x, y);
-    let n = 0;
-    let m = 0;
     if (board[y][x] !== 0) return;
-    const newBoard = structuredClone(board);
-    while (n < 6) {
-      n = n + 1;
-      if (board[y + n][x] !== undefined && board[y + n][x] === 3 - turnColor) {
-        if (
-          board[y + n + 1][x] !== undefined &&
-          board[y + n + 1][x] === turnColor &&
-          board[y + 1][x] !== 0
-        ) {
-          newBoard[y][x] = turnColor;
-          while (n + 1 > m) {
-            newBoard[y + m][x] = turnColor;
-            setTurnColor(3 - turnColor);
-            if (board[y + m + 1][x] === turnColor) {
-              break;
-            }
-            m = m + 1;
+
+    const newBoard = [...board];
+    newBoard[y][x] = turnColor;
+
+    for (const [dx, dy] of directions) {
+      let n = 1;
+      const m = 0;
+      let canFlip = false;
+      while (true) {
+        const nx = x + n * dx;
+        const ny = y + n * dy;
+        if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8 || board[ny][nx] === 0) {
+          break;
+        }
+        if (board[ny][nx] === 3 - turnColor) {
+          canFlip = true;
+          n++;
+        } else if (board[ny][nx] === turnColor && n > 1) {
+          for (let i = 1; i < n; i++) {
+            newBoard[y + i * dy][x + i * dx] = turnColor;
           }
+          break;
+        } else {
+          break;
         }
       }
+      if (canFlip) {
+        newBoard[y][x] = turnColor;
+      }
     }
+
     setBoard(newBoard);
+    setTurnColor(3 - turnColor);
   };
 
   return (
