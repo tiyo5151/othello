@@ -15,25 +15,53 @@ const directions = [
 const Home = () => {
   const [turnColor, setTurnColor] = useState(1);
   const [board, setBoard] = useState([
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 2, 0],
+    [0, 0, 0, 0, 0, 1, 2, 0],
+    [0, 0, 0, 0, 2, 1, 2, 0],
+    [0, 0, 0, 1, 2, 1, 2, 0],
+    [0, 0, 2, 1, 2, 1, 2, 0],
+    [0, 1, 2, 1, 2, 1, 2, 0],
+    [2, 1, 2, 1, 2, 1, 2, 0],
+    [1, 2, 1, 2, 1, 2, 1, 0],
   ]);
 
+  const isValidMove = (x: number, y: number): boolean => {
+    if (board[y][x] !== 0) return false;
+
+    for (const [dx, dy] of directions) {
+      let n = 1;
+      let canFlip = false;
+      while (true) {
+        const nx = x + n * dx;
+        const ny = y + n * dy;
+        if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8 || board[ny][nx] === 0) {
+          break;
+        }
+        if (board[ny][nx] === 3 - turnColor) {
+          canFlip = true;
+          n++;
+        } else if (board[ny][nx] === turnColor && n > 1) {
+          return true;
+        } else {
+          break;
+        }
+      }
+      if (canFlip) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   const clickHandler = (x: number, y: number) => {
-    if (board[y][x] !== 0) return;
+    if (!isValidMove(x, y)) return;
 
     const newBoard = [...board];
     newBoard[y][x] = turnColor;
 
     for (const [dx, dy] of directions) {
       let n = 1;
-      const m = 0;
       let canFlip = false;
       while (true) {
         const nx = x + n * dx;
@@ -67,7 +95,11 @@ const Home = () => {
       <div className={styles.board}>
         {board.map((row, y) =>
           row.map((color, x) => (
-            <div className={styles.cell} key={`${x}-${y}`} onClick={() => clickHandler(x, y)}>
+            <div
+              className={`${styles.cell} ${isValidMove(x, y) ? styles.validMove : ''}`}
+              key={`${x}-${y}`}
+              onClick={() => clickHandler(x, y)}
+            >
               {color !== 0 && (
                 <div
                   className={styles.stone}
@@ -81,4 +113,5 @@ const Home = () => {
     </div>
   );
 };
+
 export default Home;
