@@ -33,3 +33,12 @@
   background-color: whitesmoke;
   border-radius: 50%;
 }
+
+.option {
+  top: 50%;
+  left: 50%;
+  width: 28px;
+  height: 28px;
+  background-color: '#00ffff';
+  border-radius: 50%;
+}

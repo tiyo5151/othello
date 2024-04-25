@@ -15,18 +15,18 @@ const directions = [
 const Home = () => {
   const [turnColor, setTurnColor] = useState(1);
   const [board, setBoard] = useState([
-    [0, 0, 0, 0, 0, 0, 2, 0],
-    [0, 0, 0, 0, 0, 1, 2, 0],
-    [0, 0, 0, 0, 2, 1, 2, 0],
-    [0, 0, 0, 1, 2, 1, 2, 0],
-    [0, 0, 2, 1, 2, 1, 2, 0],
-    [0, 1, 2, 1, 2, 1, 2, 0],
-    [2, 1, 2, 1, 2, 1, 2, 0],
-    [1, 2, 1, 2, 1, 2, 1, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 3, 0, 0, 0, 0],
+    [0, 0, 3, 2, 1, 0, 0, 0],
+    [0, 0, 0, 1, 2, 3, 0, 0],
+    [0, 0, 0, 0, 3, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
   ]);
 
   const isValidMove = (x: number, y: number): boolean => {
-    if (board[y][x] !== 0) return false;
+    if (board[y][x] !== 0 && board[y][x] !== 3) return false;
 
     for (const [dx, dy] of directions) {
       let n = 1;
@@ -61,11 +61,12 @@ const Home = () => {
     newBoard[y][x] = turnColor;
 
     for (const [dx, dy] of directions) {
+      //dは方向
       let n = 1;
       let canFlip = false;
       while (true) {
         const nx = x + n * dx;
-        const ny = y + n * dy;
+        const ny = y + n * dy; //nは距離
         if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8 || board[ny][nx] === 0) {
           break;
         }
@@ -90,6 +91,12 @@ const Home = () => {
     setTurnColor(3 - turnColor);
   };
 
+  // const get_put_place = (x: number,y: number) boolean => {
+  //if (!isValidMove) return false;
+  //for (const[dx,dy] of directions);
+
+  // };
+
   return (
     <div className={styles.container}>
       <div className={styles.board}>
@@ -100,12 +107,13 @@ const Home = () => {
               key={`${x}-${y}`}
               onClick={() => clickHandler(x, y)}
             >
-              {color !== 0 && (
+              {color !== 0 && color !== 3 && (
                 <div
                   className={styles.stone}
                   style={{ background: color === 1 ? '#000' : '#fff' }}
                 />
               )}
+              {color === 3 && <div className={styles.option} style={{ background: '#00ffff' }} />}
             </div>
           )),
         )}
