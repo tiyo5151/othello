@@ -78,7 +78,7 @@ const Home = () => {
   const clickHandler = (x: number, y: number) => {
     if (!Can_set(x, y)) return;
 
-    const newBoard = [...board];
+    const newBoard = structuredClone(board);
     newBoard[y][x] = turnColor;
 
     for (const [dx, dy] of directions) {
@@ -107,10 +107,26 @@ const Home = () => {
         newBoard[y][x] = turnColor;
       }
     }
-
-    setBoard(newBoard);
+    console.log(ShowCan_set(newBoard));
+    setBoard(ShowCan_set(newBoard));
     setTurnColor(3 - turnColor);
   };
+
+  const ShowCan_set = (board) => {
+    const newBoard = structuredClone(board);
+    for (let y = 0; y < 8; y++) {
+      for (let x = 0; x < 8; x++) {
+        if (newBoard[y][x] === 0 || newBoard[y][x] === 3) {
+          newBoard[y][x] = Can_set(x, y) ? 3 : 0;
+        }
+      }
+    }
+    return newBoard;
+  };
+
+  // const reset = (board) => {
+
+  // }
 
   const position = (turnColor: number): React.ReactNode => {
     return turnColor === 1 ? <span>あなた</span> : <span>あいて</span>;
