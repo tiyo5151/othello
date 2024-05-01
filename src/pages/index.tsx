@@ -26,45 +26,44 @@ const Home = () => {
   ]);
 
   const Can_set = (x: number, y: number): boolean => {
-    console.log(`Checking if move is valid at (${x}, ${y})`); //ok
+    // console.log(`Checking if move is valid at (${x}, ${y})`);  //ok
 
     if (board[y][x] !== 0 && board[y][x] !== 3) {
       // console.log(`Invalid move: Cell at (${x}, ${y}) is not empty or not a valid option`);  //ok
       return false;
     }
 
+    let canFlip = false;
     for (const [dx, dy] of directions) {
-      let step = 1;
-      let canFlip = false;
-      while (true) {
-        const nx = x + step * dx;
-        const ny = y + step * dy;
-        if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8 || board[ny][nx] === 0) {
-          console.log(`Direction (${dx}, ${dy}): Hit boundary or empty cell at (${nx}, ${ny})`);
-          break;
-        }
-        if (board[ny][nx] === 3 - turnColor) {
-          // console.log(`Direction (${dx}, ${dy}): Found opponent's piece at (${nx}, ${ny})`);
-          canFlip = true;
-          step++;
-        } else if (board[ny][nx] === turnColor && step > 1) {
-          // console.log(`Direction (${dx}, ${dy}): Valid move found at (${nx}, ${ny})`);
-          return true;
-        } else {
-          // console.log(`Direction (${dx}, ${dy}): Invalid move, breaking loop`);
-          break;
-        }
+      let nx = x + dx;
+      let ny = y + dy;
+      const toFlip = []; // 裏返す石を一時的に保存する配列
+
+      while (
+        nx >= 0 &&
+        nx < 8 &&
+        ny >= 0 &&
+        ny < 8 &&
+        board[ny][nx] === (turnColor === 1 ? 2 : 1)
+      ) {
+        toFlip.push([nx, ny]); // 相手の石の座標をtoFlipに追加
+        nx += dx;
+        ny += dy;
       }
-      if (canFlip) {
-        // console.log(`Direction (${dx}, ${dy}): Can flip pieces`);
-        return true;
-      }
+
+      if (
+        nx >= 0 &&
+        nx < 8 &&
+        ny >= 0 &&
+        ny < 8 &&
+        board[ny][nx] === turnColor &&
+        toFlip.length > 0
+      ) {
+        canFlip = true; // 石を裏返すことができる
+      } else;
     }
-
-    // console.log(`No valid moves found`);
-    return false;
+    return canFlip;
   };
-
   const clickHandler = (x: number, y: number) => {
     if (!Can_set(x, y)) return;
 
