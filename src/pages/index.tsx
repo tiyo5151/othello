@@ -14,7 +14,7 @@ const directions = [
 
 const Home = () => {
   const [turnColor, setTurnColor] = useState(1);
-  const [board, setBoard] = useState([
+  const [board, setBoard] = useState<number[][]>([
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 3, 0, 0, 0, 0],
@@ -24,6 +24,17 @@ const Home = () => {
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
   ]);
+
+  const countstones = (target: number): number => {
+    let count = 0;
+    for (const row of board) {
+      count += row.filter((cell) => cell === target).length;
+    }
+    return count;
+  };
+
+  const count1 = countstones(1);
+  const count2 = countstones(2);
 
   const Can_set = (x: number, y: number): boolean => {
     // console.log(`Checking if move is valid at (${x}, ${y})`);  //ok
@@ -37,7 +48,7 @@ const Home = () => {
     for (const [dx, dy] of directions) {
       let nx = x + dx;
       let ny = y + dy;
-      const toFlip = []; // 裏返す石を一時的に保存する配列
+      const checktoFlip = []; // 裏返す石を一時的に保存する配列
 
       while (
         nx >= 0 &&
@@ -46,7 +57,7 @@ const Home = () => {
         ny < 8 &&
         board[ny][nx] === (turnColor === 1 ? 2 : 1)
       ) {
-        toFlip.push([nx, ny]); // 相手の石の座標をtoFlipに追加
+        checktoFlip.push([nx, ny]); // 相手の石の座標をtoFlipに追加
         nx += dx;
         ny += dy;
       }
@@ -57,7 +68,7 @@ const Home = () => {
         ny >= 0 &&
         ny < 8 &&
         board[ny][nx] === turnColor &&
-        toFlip.length > 0
+        checktoFlip.length > 0
       ) {
         canFlip = true; // 石を裏返すことができる
       } else;
@@ -101,14 +112,15 @@ const Home = () => {
     setTurnColor(3 - turnColor);
   };
 
-  // const get_put_place = (x: number,y: number) boolean => {
-  //if (!Can_set) return false;
-  //for (const[dx,dy] of directions);
-
-  // };
+  const position = (turnColor: number): React.ReactNode => {
+    return turnColor === 1 ? <span>あなた</span> : <span>あいて</span>;
+  };
 
   return (
     <div className={styles.container}>
+      <div>
+        <b>{position(turnColor)}の番です</b>
+      </div>
       <div className={styles.board}>
         {board.map((row, y) =>
           row.map((color, x) => (
@@ -127,6 +139,11 @@ const Home = () => {
             </div>
           )),
         )}
+        <div>
+          <b>黒の数： {count1}</b>
+          <b>|</b>
+          <b>白の数： {count2}</b>
+        </div>
       </div>
     </div>
   );
