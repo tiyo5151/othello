@@ -25,56 +25,67 @@ const Home = () => {
     [0, 0, 0, 0, 0, 0, 0, 0],
   ]);
 
-  const isValidMove = (x: number, y: number): boolean => {
-    if (board[y][x] !== 0 && board[y][x] !== 3) return false;
+  const Can_set = (x: number, y: number): boolean => {
+    console.log(`Checking if move is valid at (${x}, ${y})`); //ok
+
+    if (board[y][x] !== 0 && board[y][x] !== 3) {
+      // console.log(`Invalid move: Cell at (${x}, ${y}) is not empty or not a valid option`);  //ok
+      return false;
+    }
 
     for (const [dx, dy] of directions) {
-      let n = 1;
+      let step = 1;
       let canFlip = false;
       while (true) {
-        const nx = x + n * dx;
-        const ny = y + n * dy;
+        const nx = x + step * dx;
+        const ny = y + step * dy;
         if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8 || board[ny][nx] === 0) {
+          console.log(`Direction (${dx}, ${dy}): Hit boundary or empty cell at (${nx}, ${ny})`);
           break;
         }
         if (board[ny][nx] === 3 - turnColor) {
+          // console.log(`Direction (${dx}, ${dy}): Found opponent's piece at (${nx}, ${ny})`);
           canFlip = true;
-          n++;
-        } else if (board[ny][nx] === turnColor && n > 1) {
+          step++;
+        } else if (board[ny][nx] === turnColor && step > 1) {
+          // console.log(`Direction (${dx}, ${dy}): Valid move found at (${nx}, ${ny})`);
           return true;
         } else {
+          // console.log(`Direction (${dx}, ${dy}): Invalid move, breaking loop`);
           break;
         }
       }
       if (canFlip) {
+        // console.log(`Direction (${dx}, ${dy}): Can flip pieces`);
         return true;
       }
     }
 
+    // console.log(`No valid moves found`);
     return false;
   };
 
   const clickHandler = (x: number, y: number) => {
-    if (!isValidMove(x, y)) return;
+    if (!Can_set(x, y)) return;
 
     const newBoard = [...board];
     newBoard[y][x] = turnColor;
 
     for (const [dx, dy] of directions) {
       //dは方向
-      let n = 1;
+      let step1 = 1;
       let canFlip = false;
       while (true) {
-        const nx = x + n * dx;
-        const ny = y + n * dy; //nは距離
+        const nx = x + step1 * dx;
+        const ny = y + step1 * dy; //nは距離
         if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8 || board[ny][nx] === 0) {
           break;
         }
         if (board[ny][nx] === 3 - turnColor) {
           canFlip = true;
-          n++;
-        } else if (board[ny][nx] === turnColor && n > 1) {
-          for (let i = 1; i < n; i++) {
+          step1++;
+        } else if (board[ny][nx] === turnColor && step1 > 1) {
+          for (let i = 1; i < step1; i++) {
             newBoard[y + i * dy][x + i * dx] = turnColor;
           }
           break;
@@ -92,7 +103,7 @@ const Home = () => {
   };
 
   // const get_put_place = (x: number,y: number) boolean => {
-  //if (!isValidMove) return false;
+  //if (!Can_set) return false;
   //for (const[dx,dy] of directions);
 
   // };
@@ -103,7 +114,7 @@ const Home = () => {
         {board.map((row, y) =>
           row.map((color, x) => (
             <div
-              className={`${styles.cell} ${isValidMove(x, y) ? styles.validMove : ''}`}
+              className={`${styles.cell} ${Can_set(x, y) ? styles.validMove : ''}`}
               key={`${x}-${y}`}
               onClick={() => clickHandler(x, y)}
             >
