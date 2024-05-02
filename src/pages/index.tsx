@@ -14,7 +14,7 @@ const directions = [
 
 const Home = () => {
   const [turnColor, setTurnColor] = useState(1);
-  const [board, setBoard] = useState<number[][]>([
+  const [board, setBoard] = useState([
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 3, 0, 0, 0, 0],
@@ -79,18 +79,15 @@ const Home = () => {
     if (!Can_set(x, y)) return;
 
     const newBoard = structuredClone(board);
-    newBoard[y][x] = turnColor;
 
     for (const [dx, dy] of directions) {
       //dは方向
       let step1 = 1;
       let canFlip = false;
-      while (true) {
+
+      while (0 <= step1 && step1 < 8) {
         const nx = x + step1 * dx;
         const ny = y + step1 * dy; //nは距離
-        if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8 || board[ny][nx] === 0) {
-          break;
-        }
         if (board[ny][nx] === 3 - turnColor) {
           canFlip = true;
           step1++;
@@ -112,7 +109,7 @@ const Home = () => {
     setTurnColor(3 - turnColor);
   };
 
-  const ShowCan_set = (board) => {
+  const ShowCan_set = (board: number[][]) => {
     const newBoard = structuredClone(board);
     for (let y = 0; y < 8; y++) {
       for (let x = 0; x < 8; x++) {
