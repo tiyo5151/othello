@@ -99,36 +99,46 @@ const Home = () => {
     }
 
     let canSet = false;
+    if (
+      (y + 1 < 8 && x + 1 < 8 && board[y + 1][x + 1] === 3 - turnColor) ||
+      (x + 1 < 8 && board[y][x + 1] === 3 - turnColor) ||
+      (y - 1 >= 0 && x + 1 < 8 && board[y - 1][x + 1] === 3 - turnColor) ||
+      (y + 1 < 8 && board[y + 1][x] === 3 - turnColor) ||
+      (y - 1 >= 0 && board[y - 1][x] === 3 - turnColor) ||
+      (y + 1 < 8 && x - 1 >= 0 && board[y + 1][x - 1] === 3 - turnColor) ||
+      (x - 1 >= 0 && board[y][x - 1] === 3 - turnColor) ||
+      (y - 1 >= 0 && x - 1 >= 0 && board[y - 1][x - 1] === 3 - turnColor)
+    )
+      for (const [dx, dy] of directions) {
+        let step1 = 1;
+        let hasOpponentBetween = false;
+        while (0 < step1 && step1 < 8) {
+          const nx = x + step1 * dx;
+          const ny = y + step1 * dy;
+          console.log(`cell: (${x}, ${y})`);
 
-    for (const [dx, dy] of directions) {
-      let step1 = 1;
-      let hasOpponentBetween = false;
-      while (0 < step1 && step1 < 8) {
-        const nx = x + step1 * dx;
-        const ny = y + step1 * dy;
-        // console.log(`cell: (${x}, ${y})`);
-
-        if (nx <= 0 || nx >= 8 || ny <= 0 || ny >= 8 || board[ny][nx] === 0) {
-          // console.log(`Invalid move: Out of bounds at (${nx}, ${ny})`);
-          break;
-        }
-
-        if (board[ny][nx] === turnColor) {
-          if (step1 > 1 && hasOpponentBetween) {
-            // console.log(`Valid move found at (${x}, ${y})`);
-            canSet = true;
-          } else {
+          if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8 || board[ny][nx] === 0) {
+            console.log('Out of bounds or empty cell at', dx, dy);
             break;
           }
-        }
 
-        if (board[ny][nx] === 3 - turnColor) {
-          hasOpponentBetween = true;
-        }
+          if (board[ny][nx] === turnColor) {
+            if (step1 > 1 && hasOpponentBetween) {
+              // console.log(`Valid move found at (${x}, ${y})`);
+              canSet = true;
+            } else {
+              break;
+            }
+          }
 
-        step1++;
+          if (board[ny][nx] === 3 - turnColor) {
+            hasOpponentBetween = true;
+          }
+
+          step1++;
+        }
       }
-    }
+
     return canSet;
   };
 
@@ -162,7 +172,18 @@ const Home = () => {
     );
     for (let y = 0; y < 8; y++) {
       for (let x = 0; x < 8; x++) {
-        if (newBoard[y][x] === 0 && Can_set(x, y)) {
+        if (
+          newBoard[y][x] === 0 &&
+          Can_set(x, y) &&
+          ((y + 1 < 8 && x + 1 < 8 && board[y + 1][x + 1] === 3 - turnColor) ||
+            (x + 1 < 8 && board[y][x + 1] === 3 - turnColor) ||
+            (y - 1 >= 0 && x + 1 < 8 && board[y - 1][x + 1] === 3 - turnColor) ||
+            (y + 1 < 8 && board[y + 1][x] === 3 - turnColor) ||
+            (y - 1 >= 0 && board[y - 1][x] === 3 - turnColor) ||
+            (y + 1 < 8 && x - 1 >= 0 && board[y + 1][x - 1] === 3 - turnColor) ||
+            (x - 1 >= 0 && board[y][x - 1] === 3 - turnColor) ||
+            (y - 1 >= 0 && x - 1 >= 0 && board[y - 1][x - 1] === 3 - turnColor))
+        ) {
           newBoard[y][x] = 3;
         }
       }
