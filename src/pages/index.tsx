@@ -36,80 +36,111 @@ const Home = () => {
   const count1 = countstones(1);
   const count2 = countstones(2);
 
-  const Can_set = (x: number, y: number): boolean => {
-    // console.log(`Checking if move is valid at (${x}, ${y})`);  //ok
+  // const Can_set = (x: number, y: number): boolean => {
+  //   // console.log(`Checking if move is valid at (${x}, ${y})`); //ok
 
+  //   if (board[y][x] !== 0 || board[y][x] !== 3) {
+  //     // console.log(`Invalid move: Cell at (${x}, ${y}) is not empty or not a valid option`);  //ok
+  //     return false;
+  //   }
+
+  //   for (const [dx, dy] of directions) {
+  //     let step1: number = 1;
+  //     let betweenOpponent = false;
+  //     while (0 < step1 && step1 < 8) {
+  //       const nx = x + step1 * dx;
+  //       const ny = y + step1 * dy;
+  //       // const checktoFlip = []; // 裏返す石を一時的に保存
+
+  //       if (board[ny][nx] === 3 - turnColor) {
+  //         betweenOpponent = true;
+  //       }
+  //       if (board[ny][nx] === turnColor) {
+  //         if (step1 > 1 && betweenOpponent) {
+  //           return true;
+  //         } else {
+  //           break;
+  //         }
+  //       }
+
+  //       step1++;
+  //       // if (ny >= 0 && ny < 8 && nx >= 0 && nx < 8 && board[ny][nx] === 3 - turnColor) {
+  //       //   step1++;
+  //       // } else if (
+  //       //   ny >= 0 &&
+  //       //   ny < 8 &&
+  //       //   nx >= 0 &&
+  //       //   nx < 8 &&
+  //       //   board[ny][nx] === turnColor &&
+  //       //   step1 === 1
+  //       // ) {
+  //       //   break;
+  //       // } else if (
+  //       //   y >= 0 &&
+  //       //   ny < 8 &&
+  //       //   nx >= 0 &&
+  //       //   nx < 8 &&
+  //       //   board[ny][nx] === turnColor &&
+  //       //   step1 > 1
+  //       // ) {
+  //       //   return true;
+  //       // } else {
+  //       //   break;
+  //       // }
+  //     }
+  //   }
+  //   return false;
+  // };
+
+  const Can_set = (x: number, y: number): boolean => {
     if (board[y][x] !== 0 && board[y][x] !== 3) {
-      // console.log(`Invalid move: Cell at (${x}, ${y}) is not empty or not a valid option`);  //ok
       return false;
     }
 
-    let canFlip = false;
-    for (const [dx, dy] of directions) {
-      let nx = x + dx;
-      let ny = y + dy;
-      const checktoFlip = []; // 裏返す石を一時的に保存する配列
-
-      while (
-        nx >= 0 &&
-        nx < 8 &&
-        ny >= 0 &&
-        ny < 8 &&
-        board[ny][nx] === (turnColor === 1 ? 2 : 1)
-      ) {
-        checktoFlip.push([nx, ny]); // 相手の石の座標をtoFlipに追加
-        nx += dx;
-        ny += dy;
-      }
-
-      if (
-        nx >= 0 &&
-        nx < 8 &&
-        ny >= 0 &&
-        ny < 8 &&
-        board[ny][nx] === turnColor &&
-        checktoFlip.length > 0
-      ) {
-        canFlip = true; // 石を裏返すことができる
-      } else;
-    }
-    return canFlip;
-  };
-  const clickHandler = (x: number, y: number) => {
-    if (!Can_set(x, y)) return;
-
-    const newBoard = structuredClone(board);
+    let canSet = false;
 
     for (const [dx, dy] of directions) {
-      //dは方向
       let step1 = 1;
-      let canFlip = false;
-
-      while (0 <= step1 && step1 < 8) {
+      let hasOpponentPieceInBetween = false;
+      while (0 < step1 && step1 < 8) {
         const nx = x + step1 * dx;
-        const ny = y + step1 * dy; //nは距離
-        if (board[ny][nx] === 3 - turnColor) {
-          canFlip = true;
-          step1++;
-        } else if (board[ny][nx] === turnColor && step1 > 1) {
-          for (let i = 1; i < step1; i++) {
-            newBoard[y + i * dy][x + i * dx] = turnColor;
-          }
-          break;
-        } else {
+        const ny = y + step1 * dy;
+
+        if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8 || board[ny][nx] === 0) {
           break;
         }
-      }
-      if (canFlip) {
-        newBoard[y][x] = turnColor;
+
+        if (board[ny][nx] === turnColor) {
+          if (step1 > 1 && hasOpponentPieceInBetween) {
+            canSet = true;
+          }
+          break;
+        }
+
+        if (board[ny][nx] === 3 - turnColor) {
+          hasOpponentPieceInBetween = true;
+        }
+
+        step1++;
       }
     }
-    console.log(ShowCan_set(newBoard));
-    setBoard(ShowCan_set(newBoard));
-    setTurnColor(3 - turnColor);
+
+    return canSet;
   };
 
-  const ShowCan_set = (board: number[][]) => {
+  // const ShowCan_set = (newBoard: number[][]) => {
+  //   const NewnewBoard = structuredClone(newBoard);
+  //   for (let y = 0; y < 8; y++) {
+  //     for (let x = 0; x < 8; x++) {
+  //       if (newBoard[y][x] === 0 || newBoard[y][x] === 3) {
+  //         NewnewBoard[y][x] = Can_set(x, y) ? 3 : 0;
+  //       }
+  //     }
+  //   }
+  //   return NewnewBoard;
+  // };
+
+  const ShowCan_set = () => {
     const newBoard = structuredClone(board);
     for (let y = 0; y < 8; y++) {
       for (let x = 0; x < 8; x++) {
@@ -118,13 +149,106 @@ const Home = () => {
         }
       }
     }
-    return newBoard;
+    setBoard(newBoard);
   };
+  // const clickHandler = (x: number, y: number) => {
+  //   console.log(`Clicked cell: (${x}, ${y})`);
 
-  // const reset = (board) => {
+  //   if (!Can_set) {
+  //     return;
+  //   }
 
-  // }
+  //   const newBoard = structuredClone(board);
 
+  //   for (const [dx, dy] of directions) {
+  //     //dは方向
+  //     let step2: number = 1;
+  //     let canFlip = false;
+
+  //     while (0 < step2 && step2 < 8) {
+  //       const nx = x + step2 * dx;
+  //       const ny = y + step2 * dy; //nは距離
+  //       // if (ny < 0 || ny >= 8 || nx < 0 || nx >= 8) {
+  //       //   break;
+  //       // }
+  //       if (ny >= 0 && ny < 8 && nx >= 0 && nx < 8 && board[ny][nx] === 3 - turnColor) {
+  //         canFlip = true;
+  //         step2++;
+  //       } else if (
+  //         ny >= 0 &&
+  //         ny < 8 &&
+  //         nx >= 0 &&
+  //         nx < 8 &&
+  //         board[ny][nx] === turnColor &&
+  //         step2 === 1
+  //       ) {
+  //         break;
+  //       } else if (
+  //         ny >= 0 &&
+  //         ny < 8 &&
+  //         nx >= 0 &&
+  //         nx < 8 &&
+  //         board[ny][nx] === turnColor &&
+  //         step2 > 1
+  //       ) {
+  //         for (let i = 1; i <= step2; i++) {
+  //           newBoard[y + i * dy][x + i * dx] = turnColor;
+  //         }
+  //         break;
+  //       } else {
+  //         break;
+  //       }
+  //     }
+  //     if (canFlip) {
+  //       newBoard[y][x] = turnColor;
+  //       setTurnColor(3 - turnColor);
+  //     }
+  //   }
+  //   setBoard(newBoard);
+  //   console.log(newBoard);
+  // };
+
+  const clickHandler = (x: number, y: number) => {
+    console.log(`Clicked cell: (${x}, ${y})`);
+
+    if (!Can_set(x, y)) return;
+
+    const newBoard = structuredClone(board);
+
+    for (const [dx, dy] of directions) {
+      let step2: number = 1;
+      let canFlip = false;
+
+      while (0 < step2 && step2 < 8) {
+        const nx = x + step2 * dx;
+        const ny = y + step2 * dy;
+
+        if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8 || board[ny][nx] === 0) {
+          break;
+        }
+
+        if (board[ny][nx] === 3 - turnColor) {
+          canFlip = true;
+          step2++;
+        } else if (board[ny][nx] === turnColor && step2 > 1) {
+          for (let i = 1; i < step2; i++) {
+            newBoard[y + i * dy][x + i * dx] = turnColor;
+          }
+          break;
+        } else {
+          break;
+        }
+      }
+
+      if (canFlip) {
+        newBoard[y][x] = turnColor;
+        setTurnColor(3 - turnColor);
+      }
+    }
+    setBoard(newBoard);
+    console.log(newBoard);
+  };
+  console.log(turnColor);
   const position = (turnColor: number): React.ReactNode => {
     return turnColor === 1 ? <span>あなた</span> : <span>あいて</span>;
   };
