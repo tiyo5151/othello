@@ -108,8 +108,8 @@ const Home = () => {
         const ny = y + step1 * dy;
         console.log(`cell: (${x}, ${y})`);
 
-        if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8 || board[ny][nx] === 0) {
-          // console.log(`Invalid move: Out of bounds at (${nx}, ${ny})`);
+        if (nx <= 0 || nx >= 8 || ny <= 0 || ny >= 8 || board[ny][nx] === 0) {
+          console.log(`Invalid move: Out of bounds at (${nx}, ${ny})`);
           break;
         }
 
@@ -117,8 +117,9 @@ const Home = () => {
           if (step1 > 1 && hasOpponentBetween) {
             console.log(`Valid move found at (${x}, ${y})`);
             canSet = true;
+          } else {
+            break;
           }
-          break;
         }
 
         if (board[ny][nx] === 3 - turnColor) {
@@ -128,7 +129,6 @@ const Home = () => {
         step1++;
       }
     }
-
     return canSet;
   };
 
@@ -155,8 +155,8 @@ const Home = () => {
     //   }
     // }
 
-    const newBoard = board.map((row, y) =>
-      row.map((cell, x) => {
+    const newBoard = board.map((row) =>
+      row.map((cell) => {
         return cell === 3 ? 0 : cell;
       }),
     );
