@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './index.module.css';
 
 const directions = [
@@ -17,10 +17,10 @@ const Home = () => {
   const [board, setBoard] = useState([
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 3, 0, 0, 0, 0],
-    [0, 0, 3, 2, 1, 0, 0, 0],
-    [0, 0, 0, 1, 2, 3, 0, 0],
-    [0, 0, 0, 0, 3, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 2, 1, 0, 0, 0],
+    [0, 0, 0, 1, 2, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
   ]);
@@ -94,6 +94,7 @@ const Home = () => {
 
   const Can_set = (x: number, y: number): boolean => {
     if (board[y][x] !== 0 && board[y][x] !== 3) {
+      console.log(`Cell (${x}, ${y}) is not empty or not a valid option`);
       return false;
     }
 
@@ -101,24 +102,27 @@ const Home = () => {
 
     for (const [dx, dy] of directions) {
       let step1 = 1;
-      let hasOpponentPieceInBetween = false;
+      let hasOpponentBetween = false;
       while (0 < step1 && step1 < 8) {
         const nx = x + step1 * dx;
         const ny = y + step1 * dy;
+        console.log(`cell: (${x}, ${y})`);
 
         if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8 || board[ny][nx] === 0) {
+          // console.log(`Invalid move: Out of bounds at (${nx}, ${ny})`);
           break;
         }
 
         if (board[ny][nx] === turnColor) {
-          if (step1 > 1 && hasOpponentPieceInBetween) {
+          if (step1 > 1 && hasOpponentBetween) {
+            console.log(`Valid move found at (${x}, ${y})`);
             canSet = true;
           }
           break;
         }
 
         if (board[ny][nx] === 3 - turnColor) {
-          hasOpponentPieceInBetween = true;
+          hasOpponentBetween = true;
         }
 
         step1++;
@@ -141,16 +145,35 @@ const Home = () => {
   // };
 
   const ShowCan_set = () => {
-    const newBoard = structuredClone(board);
+    // const newBoard = structuredClone(board);
+    // for (let y = 0; y < 8; y++) {
+    //   for (let x = 0; x < 8; x++) {
+    //     if (newBoard[y][x] === 0 || newBoard[y][x] === 3) {
+    //       newBoard[y][x] = Can_set(x, y) ? 3 : 0;
+    //       console.log(`Updated cell (${x}, ${y}) to ${newBoard[y][x]}`);
+    //     }
+    //   }
+    // }
+
+    const newBoard = board.map((row, y) =>
+      row.map((cell, x) => {
+        return cell === 3 ? 0 : cell;
+      }),
+    );
     for (let y = 0; y < 8; y++) {
       for (let x = 0; x < 8; x++) {
-        if (newBoard[y][x] === 0 || newBoard[y][x] === 3) {
-          newBoard[y][x] = Can_set(x, y) ? 3 : 0;
+        if (newBoard[y][x] === 0 && Can_set(x, y)) {
+          newBoard[y][x] = 3;
         }
       }
     }
+
     setBoard(newBoard);
   };
+
+  useEffect(() => {
+    ShowCan_set();
+  }, [turnColor]);
   // const clickHandler = (x: number, y: number) => {
   //   console.log(`Clicked cell: (${x}, ${y})`);
 
