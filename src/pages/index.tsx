@@ -94,7 +94,7 @@ const Home = () => {
 
   const Can_set = (x: number, y: number): boolean => {
     if (board[y][x] !== 0 && board[y][x] !== 3) {
-      console.log(`Cell (${x}, ${y}) is not empty or not a valid option`);
+      // console.log(`Cell (${x}, ${y}) is not empty or not a valid option`);
       return false;
     }
 
@@ -106,16 +106,16 @@ const Home = () => {
       while (0 < step1 && step1 < 8) {
         const nx = x + step1 * dx;
         const ny = y + step1 * dy;
-        console.log(`cell: (${x}, ${y})`);
+        // console.log(`cell: (${x}, ${y})`);
 
         if (nx <= 0 || nx >= 8 || ny <= 0 || ny >= 8 || board[ny][nx] === 0) {
-          console.log(`Invalid move: Out of bounds at (${nx}, ${ny})`);
+          // console.log(`Invalid move: Out of bounds at (${nx}, ${ny})`);
           break;
         }
 
         if (board[ny][nx] === turnColor) {
           if (step1 > 1 && hasOpponentBetween) {
-            console.log(`Valid move found at (${x}, ${y})`);
+            // console.log(`Valid move found at (${x}, ${y})`);
             canSet = true;
           } else {
             break;
@@ -232,7 +232,7 @@ const Home = () => {
   // };
 
   const clickHandler = (x: number, y: number) => {
-    console.log(`Clicked cell: (${x}, ${y})`);
+    // console.log(`Clicked cell: (${x}, ${y})`);
 
     if (!Can_set(x, y)) return;
 
@@ -271,7 +271,7 @@ const Home = () => {
     setBoard(newBoard);
     console.log(newBoard);
   };
-  console.log(turnColor);
+  // console.log(turnColor);
   const position = (turnColor: number): React.ReactNode => {
     return turnColor === 1 ? <span>あなた</span> : <span>あいて</span>;
   };
